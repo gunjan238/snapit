@@ -7,9 +7,9 @@ import { About } from "./components/About";
 import { Services } from "./components/Services";
 import { ScrollShowcase } from "./components/ScrollShowcase";
 import { Projects } from "./components/Projects";
-import { Clients } from "./components/Clients";
-import { Team } from "./components/Team";
-import { Testimonials } from "./components/Testimonials";
+// import { Clients } from "./components/Clients";
+// import { Team } from "./components/Team";
+// import { Testimonials } from "./components/Testimonials";
 import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
 
@@ -25,9 +25,9 @@ export default function App() {
         <About />
         <Services />
         <Projects />
-        <Clients />
-        <Team />
-        <Testimonials />
+        {/* <Clients /> */}
+        {/* <Team /> */}
+        {/* <Testimonials /> */}
         <Contact />
       </main>
 

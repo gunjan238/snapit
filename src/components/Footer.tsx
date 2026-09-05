@@ -9,7 +9,7 @@ export function Footer() {
         <div className="lg:col-span-2">
           <div className="flex items-center gap-3">
             <img src={logoAsset} alt="SnapIt" className="h-12 w-12 rounded-lg" />
-            <span className="text-xl font-semibold">Snap<span className="text-gradient-gold">It</span></span>
+            {/* <span className="text-xl font-semibold">Snap<span className="text-gradient-gold">It</span></span> */}
           </div>
           <p className="mt-5 text-muted-foreground max-w-md leading-relaxed">
             A Pune-based creative agency crafting cinematic photography,

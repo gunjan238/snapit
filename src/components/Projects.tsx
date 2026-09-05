@@ -3,39 +3,39 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useState } from "react";
 import wedding from "@/assets/project-wedding.jpg";
-import fashion from "@/assets/project-fashion.jpg";
-import product from "@/assets/project-product.jpg";
-import election from "@/assets/project-election.jpg";
+// import fashion from "@/assets/project-fashion.jpg";
+// import product from "@/assets/project-product.jpg";
+// import election from "@/assets/project-election.jpg";
 import { SectionHeading } from "./SectionHeading";
 
 const projects = [
   { img: wedding, title: "Royal Wedding Film", category: "Wedding · 2024", span: "lg:col-span-2 lg:row-span-2" },
-  { img: fashion, title: "Couture Editorial", category: "Fashion · 2024", span: "" },
-  { img: product, title: "Luxe Product Launch", category: "Product · 2024", span: "" },
-  { img: election, title: "Pune Campaign", category: "Political · 2024", span: "lg:col-span-2" },
+  // { img: fashion, title: "Couture Editorial", category: "Fashion · 2024", span: "" },
+  // { img: product, title: "Luxe Product Launch", category: "Product · 2024", span: "" },
+  // { img: election, title: "Pune Campaign", category: "Political · 2024", span: "lg:col-span-2" },
 ];
 
 const reels = [
-  {
-    img: fashion,
-    title: "Brand Reel",
-    video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-  },
+  // {
+  //   img: fashion,
+  //   title: "Brand Reel",
+  //   // video: "/weddings/feedback1.mp4",
+  // },
   {
     img: wedding,
-    title: "Wedding Teaser",
-    video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    title: "Valued Feedback",
+    video: "/weddings/feedback1.mp4",
   },
-  {
-    img: product,
-    title: "Product Story",
-    video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-  },
-  {
-    img: election,
-    title: "Rally Cut",
-    video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-  },
+  // {
+  //   img: product,
+  //   title: "Product Story",
+  //   // video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+  // },
+  // {
+  //   img: election,
+  //   title: "Rally Cut",
+  //   // video: "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+  // },
 ];
 
 export function Projects() {
@@ -101,8 +101,7 @@ function ReelsSwipeStack() {
     <div className="mt-0">
       <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
         <h3 className="text-2xl font-semibold">
-          Latest <span className="text-gradient-gold">reels</span>
-         
+          Feed<span className="text-gradient-gold">backs</span>
         </h3>
         <div className="flex gap-3">
           <button
@@ -186,13 +185,14 @@ function ReelCard({
         alt={reel.title}
         className="absolute inset-0 w-full h-full object-cover"
       />
+
       <AnimatePresence>
-        {isTop && hovered && (
+        {isTop && hovered && reel.video && (
           <motion.video
             key="video"
             src={reel.video}
             autoPlay
-            muted
+            
             loop
             playsInline
             initial={{ opacity: 0 }}
@@ -203,7 +203,9 @@ function ReelCard({
           />
         )}
       </AnimatePresence>
+
       <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/20 to-transparent pointer-events-none" />
+
       {!hovered && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="relative">
@@ -214,6 +216,7 @@ function ReelCard({
           </div>
         </div>
       )}
+
       <div className="absolute bottom-4 left-4 right-4 pointer-events-none">
         <p className="text-xs uppercase tracking-widest text-primary mb-1">Reel</p>
         <p className="font-semibold text-lg">{reel.title}</p>

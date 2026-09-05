@@ -10,7 +10,7 @@ const links = [
   { href: "#about", label: "About" },
   { href: "#services", label: "Services" },
   { href: "#projects", label: "Work" },
-  { href: "#team", label: "Team" },
+  // { href: "#team", label: "Team" },
   { href: "#contact", label: "Contact" },
 ];
 
@@ -38,9 +38,9 @@ export function Navbar() {
       <nav className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
         <a href="#home" className="flex items-center gap-3">
           <img src={logoAsset} alt="SnapItt" className="h-12 w-12 object-contain rounded-lg" />
-          <span className="font-semibold text-lg tracking-wide">
+          {/* <span className="font-semibold text-lg tracking-wide">
             Snap<span className="text-gradient-gold">It</span>
-          </span>
+          </span> */}
         </a>
 
         <ul className="hidden lg:flex items-center gap-9 text-sm">
