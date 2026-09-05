@@ -10,25 +10,37 @@ dotenv.config();
 const app = express();
 
 /* =========================================================
-Resend Configuration
+   Environment Variables
 ========================================================= */
-const resend = new Resend(process.env.RESEND_API_KEY);
 
-console.log("RESEND KEY LOADED:", !!process.env.RESEND_API_KEY);
-console.log("TO_EMAIL:", process.env.TO_EMAIL);
+const PORT = process.env.PORT || 5000;
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const TO_EMAIL = process.env.TO_EMAIL;
+
+if (!RESEND_API_KEY) {
+  console.error("ERROR: RESEND_API_KEY is missing from .env");
+  process.exit(1);
+}
+
+if (!TO_EMAIL) {
+  console.error("ERROR: TO_EMAIL is missing from .env");
+  process.exit(1);
+}
+
+const resend = new Resend(RESEND_API_KEY);
+
+console.log("RESEND API KEY LOADED: YES");
+console.log("EMAIL DESTINATION:", TO_EMAIL);
 
 /* =========================================================
-Health Check Route
+   CORS
 ========================================================= */
-app.get("/", (req, res) => {
-  res.status(200).send("Backend Running Successfully");
-});
 
-/* =========================================================
-CORS Configuration
-========================================================= */
 const allowedOrigins = [
+  "http://localhost:5173",
   "http://localhost:8080",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:8080",
   "https://snapitt.in",
   "https://www.snapitt.in",
 ];
@@ -36,126 +48,180 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow Postman, curl, mobile apps
+      // Allow requests without Origin
+      // e.g. Postman, curl
       if (!origin) {
         return callback(null, true);
       }
-
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
       console.error("Blocked by CORS:", origin);
+
       return callback(new Error("CORS not allowed"));
     },
     methods: ["GET", "POST", "OPTIONS"],
-    credentials: true,
-
-
+    allowedHeaders: ["Content-Type"],
   })
 );
 
 app.use(express.json());
 
 /* =========================================================
-Contact Form API
+   Health Check
 ========================================================= */
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Snapitt email backend is running.",
+  });
+});
+
+/* =========================================================
+   Contact Form
+========================================================= */
+
 app.post("/send-email", async (req, res) => {
-  console.log("Incoming Request Body:", req.body);
+  console.log("Incoming contact request");
 
   const {
     name,
     email,
     phone,
-    company,
-    subject,
     message,
   } = req.body;
 
-  /* Validation */
+  /* =======================================================
+     Validation
+  ======================================================= */
+
   if (!name || !email || !message) {
     return res.status(400).json({
       success: false,
-      message: "Name, Email and Message are required.",
+      error: "Name, email and message are required.",
     });
   }
 
   try {
-    console.log("Attempting email send...");
-
+    console.log("Sending email through Resend...");
 
     const { data, error } = await resend.emails.send({
       /*
-        USE THIS IF DOMAIN IS VERIFIED
+        IMPORTANT:
+
+        For testing:
+        from: "Snapitt Website <onboarding@resend.dev>"
+
+        For production, use an address from your
+        verified Snapitt domain, e.g.:
+
+        from: "Snapitt Website <info@snapitt.in>"
       */
-      from: "Website Enquiry <info@mahadyuta.com>",
+
+      from: "Snapitt Website <onboarding@resend.dev>",
 
       /*
-        IF DOMAIN IS NOT VERIFIED YET,
-        COMMENT ABOVE LINE AND USE:
-    
-        from: "onboarding@resend.dev",
+        This is the email where YOU receive enquiries.
       */
+      to: [TO_EMAIL],
 
-      to: [process.env.TO_EMAIL],
-
+      /*
+        When you press Reply in Gmail,
+        it will reply to the visitor.
+      */
       replyTo: email,
 
-      subject: subject || "New Contact Enquiry",
+      subject: `New Snapitt Enquiry from ${name}`,
 
       html: `
-    <h2>New Contact Form Submission</h2>
+        <!DOCTYPE html>
+        <html>
+          <body style="font-family: Arial, sans-serif; line-height: 1.6;">
 
-    <p><strong>Name:</strong> ${name}</p>
-    <p><strong>Email:</strong> ${email}</p>
-    <p><strong>Phone:</strong> ${phone || "-"}</p>
-    <p><strong>Company:</strong> ${company || "-"}</p>
-    <p><strong>Subject:</strong> ${subject || "-"}</p>
+            <h2>New Contact Form Submission</h2>
 
-    <hr />
+            <p>
+              <strong>Name:</strong>
+              ${escapeHtml(name)}
+            </p>
 
-    <p><strong>Message:</strong></p>
-    <p>${message}</p>
-  `,
+            <p>
+              <strong>Email:</strong>
+              ${escapeHtml(email)}
+            </p>
+
+            <p>
+              <strong>Phone:</strong>
+              ${escapeHtml(phone || "-")}
+            </p>
+
+            <hr />
+
+            <p>
+              <strong>Message:</strong>
+            </p>
+
+            <p>
+              ${escapeHtml(message).replace(/\n/g, "<br />")}
+            </p>
+
+          </body>
+        </html>
+      `,
     });
 
-    console.log("RESEND DATA:", data);
-    console.log("RESEND ERROR:", error);
-
     if (error) {
+      console.error("RESEND ERROR:", error);
+
       return res.status(500).json({
         success: false,
-        message: error.message,
+        error: error.message || "Resend failed to send email.",
       });
     }
 
-    console.log("Email Sent Successfully");
+    console.log("Email sent successfully:", data?.id);
 
     return res.status(200).json({
       success: true,
       message: "Email sent successfully.",
+      id: data?.id,
     });
-
-
   } catch (error) {
     console.error("SERVER ERROR:", error);
 
-
     return res.status(500).json({
       success: false,
-      message: error?.message || "Failed to send email.",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to send email.",
     });
-
-
   }
 });
 
 /* =========================================================
-Server Start
+   Simple HTML escaping
 ========================================================= */
-const PORT = process.env.PORT || 5000;
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+/* =========================================================
+   Start Server
+========================================================= */
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log("----------------------------------------");
+  console.log(`Snapitt backend running on port ${PORT}`);
+  console.log(`http://localhost:${PORT}`);
+  console.log("----------------------------------------");
 });
