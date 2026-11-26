@@ -24,13 +24,13 @@ export function SectionHeading({
       className={`max-w-3xl ${align === "center" ? "mx-auto text-center" : ""}`}
     >
       {eyebrow && (
-        <p className="text-xs tracking-[0.4em] uppercase text-primary mb-4">{eyebrow}</p>
+        <p className="text-[10px] sm:text-xs tracking-[0.3em] sm:tracking-[0.4em] uppercase text-primary mb-3 sm:mb-4">{eyebrow}</p>
       )}
-      <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
+      <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
         {title} {highlight && <span className="text-gradient-gold">{highlight}</span>}
       </h2>
       {description && (
-        <p className="mt-5 text-muted-foreground text-lg leading-relaxed">{description}</p>
+        <p className="mt-4 sm:mt-5 text-muted-foreground text-base sm:text-lg leading-relaxed">{description}</p>
       )}
     </motion.div>
   );

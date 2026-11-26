@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import logoAsset from "@/assets/snapitt-logo.jpg";
+import logoAsset from "@/assets/snapitt-logo.png";
 import { ThemeToggle } from "./ThemeToggle";
 
 const links = [
@@ -10,7 +10,6 @@ const links = [
   { href: "#about", label: "About" },
   { href: "#services", label: "Services" },
   { href: "#projects", label: "Work" },
-  // { href: "#team", label: "Team" },
   { href: "#contact", label: "Contact" },
 ];
 
@@ -24,6 +23,16 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Prevent body scroll when mobile menu open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
+
   return (
     <motion.header
       initial={{ y: -80, opacity: 0 }}
@@ -35,15 +44,13 @@ export function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <nav className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
-        <a href="#home" className="flex items-center gap-3">
-          <img src={logoAsset} alt="SnapItt" className="h-12 w-12 object-contain rounded-lg" />
-          {/* <span className="font-semibold text-lg tracking-wide">
-            Snap<span className="text-gradient-gold">It</span>
-          </span> */}
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 h-16 sm:h-20 flex items-center justify-between">
+        <a href="#home" className="flex items-center gap-3 shrink-0">
+          <img src={logoAsset} alt="SnapItt" className="h-9 w-9 sm:h-12 sm:w-12 object-contain rounded-lg" />
         </a>
 
-        <ul className="hidden lg:flex items-center gap-9 text-sm">
+        {/* Desktop nav */}
+        <ul className="hidden lg:flex items-center gap-6 xl:gap-9 text-sm">
           {links.map((l) => (
             <li key={l.href}>
               <a href={l.href} className="text-muted-foreground hover:text-primary transition-colors">
@@ -57,49 +64,55 @@ export function Navbar() {
           <ThemeToggle />
           <a
             href="#contact"
-            className="inline-flex items-center px-6 h-11 rounded-full bg-gradient-gold text-primary-foreground font-medium text-sm shadow-gold hover:scale-105 transition-transform"
+            className="inline-flex items-center px-5 xl:px-6 h-10 xl:h-11 rounded-full bg-gradient-gold text-primary-foreground font-medium text-sm shadow-gold hover:scale-105 transition-transform whitespace-nowrap"
           >
             Book a Call
           </a>
         </div>
 
+        {/* Mobile controls */}
         <div className="lg:hidden flex items-center gap-2">
           <ThemeToggle />
           <button
-          className="lg:hidden text-foreground"
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle menu"
+            className="text-foreground p-1.5 rounded-lg hover:bg-card/60 transition-colors"
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Toggle menu"
+            aria-expanded={open}
           >
-            {open ? <X /> : <Menu />}
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </nav>
 
+      {/* Mobile menu */}
       {open && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="lg:hidden backdrop-blur-xl bg-background/90 border-b border-border"
+          exit={{ opacity: 0, y: -10 }}
+          className="lg:hidden backdrop-blur-xl bg-background/95 border-b border-border"
         >
-          <ul className="flex flex-col gap-4 px-6 py-6">
+          <ul className="flex flex-col gap-1 px-4 sm:px-6 py-4">
             {links.map((l) => (
               <li key={l.href}>
                 <a
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="block text-muted-foreground hover:text-primary"
+                  className="block py-3 px-2 text-base text-muted-foreground hover:text-primary rounded-lg hover:bg-card/40 transition-all"
                 >
                   {l.label}
                 </a>
               </li>
             ))}
-            <a
-              href="#contact"
-              onClick={() => setOpen(false)}
-              className="mt-2 inline-flex justify-center items-center h-11 rounded-full bg-gradient-gold text-primary-foreground font-medium"
-            >
-              Book a Call
-            </a>
+            <li className="pt-2">
+              <a
+                href="#contact"
+                onClick={() => setOpen(false)}
+                className="flex justify-center items-center h-12 rounded-full bg-gradient-gold text-primary-foreground font-medium text-sm shadow-gold"
+              >
+                Book a Call
+              </a>
+            </li>
           </ul>
         </motion.div>
       )}
