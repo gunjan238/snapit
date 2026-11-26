@@ -3,7 +3,7 @@ import { Toaster } from "sonner";
 import { CameraIntro } from "./components/CameraIntro";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
-import { About } from "./components/About";
+// import { About } from "./components/About";
 import { Services } from "./components/Services";
 import { ScrollShowcase } from "./components/ScrollShowcase";
 import { Projects } from "./components/Projects";
@@ -22,7 +22,7 @@ export default function App() {
       <main>
         <Hero />
         <ScrollShowcase />
-        <About />
+        {/* <About /> */}
         <Services />
         <Projects />
         {/* <Clients /> */}

@@ -30,7 +30,7 @@ export function Footer() {
         <div>
           <h4 className="text-xs sm:text-sm uppercase tracking-widest text-primary mb-4 sm:mb-5">Studio</h4>
           <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base text-muted-foreground">
-            <li><a href="#about" className="hover:text-primary transition-colors">About</a></li>
+            {/* <li><a href="#about" className="hover:text-primary transition-colors">About</a></li> */}
             <li><a href="#services" className="hover:text-primary transition-colors">Services</a></li>
             <li><a href="#projects" className="hover:text-primary transition-colors">Work</a></li>
           </ul>
